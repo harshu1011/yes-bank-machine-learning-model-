@@ -1,0 +1,91 @@
+{
+  "dataset": {
+    "rows": 185,
+    "first_month": "2005-07",
+    "last_month": "2020-11",
+    "supervised_rows": 179,
+    "target": "following_month_close"
+  },
+  "split": {
+    "method": "chronological 80/20",
+    "train_rows": 143,
+    "test_rows": 36,
+    "test_first_target_month": "2017-12",
+    "test_last_target_month": "2020-11"
+  },
+  "selection": {
+    "method": "lowest training-period TimeSeriesSplit cross-validation MAE",
+    "selected_model": "ridge",
+    "cross_validation_mae": {
+      "ridge": 10.176972004613848,
+      "random_forest": 34.69275667877206
+    },
+    "best_parameters": {
+      "ridge": {
+        "model__alpha": 1.0
+      },
+      "random_forest": {
+        "max_depth": 4,
+        "max_features": 1.0,
+        "min_samples_leaf": 2
+      }
+    }
+  },
+  "feature_insights": {
+    "ridge_standardized_coefficients": {
+      "close": 44.219232401987604,
+      "low": 22.1796564317608,
+      "close_mean_6": 12.799957897191534,
+      "high": 11.079033908180728,
+      "close_mean_3": 10.778950687543732,
+      "open": -8.415487087653442,
+      "close_lag_1": -7.7482275972027335,
+      "close_lag_2": -5.516412558050135,
+      "year": 3.7174663626132607,
+      "close_lag_3": 2.485701381536354,
+      "month_sin": 1.259926318519985,
+      "month_cos": 0.10625102651336345
+    },
+    "random_forest_importance": {
+      "close": 0.2302495033737481,
+      "high": 0.20728054901082707,
+      "low": 0.1699556023881051,
+      "close_mean_6": 0.10273576456223038,
+      "close_mean_3": 0.08401102188398557,
+      "open": 0.0637805001153273,
+      "close_lag_1": 0.054842878579958676,
+      "close_lag_3": 0.05208448066688623,
+      "close_lag_2": 0.02540531388692052,
+      "year": 0.006500837636658027,
+      "month_sin": 0.0022164242567293472,
+      "month_cos": 0.0009371236386237622
+    },
+    "interpretation_note": "Feature associations are not causal. OHLC values within a month are highly related and the dataset contains no news or market-wide variables."
+  },
+  "holdout_metrics": {
+    "persistence_baseline": {
+      "mae": 23.796388888888888,
+      "rmse": 38.821633681063275,
+      "mape_percent": 22.461442310891044,
+      "r2": 0.9071952214857022
+    },
+    "ridge": {
+      "mae": 31.741658555705435,
+      "rmse": 43.9551369500687,
+      "mape_percent": 49.871654910835076,
+      "r2": 0.8810287570101888
+    },
+    "random_forest": {
+      "mae": 30.577282360909106,
+      "rmse": 44.39654361316802,
+      "mape_percent": 36.37210878801614,
+      "r2": 0.8786272911145889
+    }
+  },
+  "next_month_forecast": {
+    "target_month": "2020-12",
+    "predicted_close": 16.670604623819543,
+    "training_data_through": "2020-11",
+    "note": "Historical forecast only; dataset ends in November 2020 and this is not a current-market estimate."
+  }
+}
