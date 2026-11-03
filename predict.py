@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from joblib import load
 
@@ -20,14 +21,22 @@ def main() -> None:
         raise SystemExit(f"Model file not found: {args.model}. Run train.py first.")
 
     frame = load_data(args.data)
+    artifact = load(args.model)
     latest_features = make_features(frame).iloc[[-1]]
     if latest_features.isna().any(axis=None):
         raise SystemExit("Not enough monthly history to build lag features for a forecast.")
-    forecast = float(load(args.model).predict(latest_features)[0])
+    method = artifact["selected_model"]
+    if method == "persistence_baseline":
+        forecast = float(frame["close"].iloc[-1])
+    else:
+        latest_features = latest_features[artifact["feature_columns"]]
+        predicted_log_return = float(artifact["estimator"].predict(latest_features)[0])
+        forecast = float(frame["close"].iloc[-1] * np.exp(predicted_log_return))
     target_month = (frame["date"].max() + pd.offsets.MonthBegin(1)).strftime("%Y-%m")
     print(f"Training data through: {frame['date'].max():%Y-%m}")
     print(f"Forecast target month: {target_month}")
     print(f"Predicted closing price: {forecast:.2f}")
+    print(f"Forecast method: {method}")
     print("This is a historical-data forecast. It is only useful for a current estimate if the CSV is updated first.")
 
 
