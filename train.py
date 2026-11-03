@@ -69,8 +69,7 @@ def make_features(frame: pd.DataFrame) -> pd.DataFrame:
 
 def make_supervised(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
     features = make_features(frame)
-    # Row t predicts close at t+1. The current month close is allowed because
-    # predictions are made after month t has completed.
+
     target = frame["close"].shift(-1).rename("target_next_close")
     target_date = frame["date"].shift(-1).rename("target_date")
     valid = features.notna().all(axis=1) & target.notna() & target_date.notna()
@@ -219,8 +218,6 @@ def train(data_path: Path) -> dict:
     fig.savefig(ARTIFACTS / "holdout_mae_comparison.png", dpi=160)
     plt.close(fig)
 
-    # Refit the CV-selected model on all historical supervised rows for use in
-    # the next-month forecast; holdout metrics above remain from the untouched test set.
     final_search = searches[selected_name]
     final_model = final_search.best_estimator_.set_params(**final_search.best_params_)
     final_model.fit(X, y)
